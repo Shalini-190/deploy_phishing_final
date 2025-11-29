@@ -21,7 +21,12 @@ def test_urls():
         res = detector.predict_url(url)
         print(f"\nURL: {url}")
         print(f"Verdict: {res.get('final_verdict', 'N/A')}")
-        print(f"Confidence: {res.get('ensemble_probability', 0):.4f}")
+        
+        # Calculate confidence in the verdict
+        prob = res.get('ensemble_probability', 0)
+        confidence = prob if res.get('final_verdict') == 'Phishing' else (1 - prob)
+        
+        print(f"Confidence: {confidence:.4f}")
         print(f"SLM Enabled: {res.get('slm_enabled', False)}")
 
 def test_emails():

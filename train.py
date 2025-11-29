@@ -35,15 +35,46 @@ def load_urlhaus():
         return []
 
 def load_legit():
-    print("Loading Cisco Umbrella Top 1M (Subset)...")
+    print("Loading Legitimate URLs (Expanded)...")
     try:
-        # Using a smaller subset for quick training in this environment
-        # In production, download the full zip
-        urls = ["https://www.google.com", "https://www.facebook.com", "https://www.youtube.com", 
-                "https://www.amazon.com", "https://www.wikipedia.org", "https://www.twitter.com",
-                "https://www.instagram.com", "https://www.linkedin.com", "https://www.reddit.com",
-                "https://www.netflix.com", "https://www.microsoft.com", "https://www.apple.com"] * 100
-        print(f"{len(urls)} legitimate URLs (simulated)")
+        # Expanded list of legitimate domains
+        domains = [
+            "google.com", "facebook.com", "youtube.com", "twitter.com", "instagram.com",
+            "linkedin.com", "wikipedia.org", "yahoo.com", "reddit.com", "amazon.com",
+            "netflix.com", "microsoft.com", "apple.com", "twitch.tv", "stackoverflow.com",
+            "github.com", "gitlab.com", "bitbucket.org", "medium.com", "quora.com",
+            "paypal.com", "chase.com", "bankofamerica.com", "wellsfargo.com", "nytimes.com",
+            "cnn.com", "bbc.co.uk", "theguardian.com", "forbes.com", "bloomberg.com",
+            "adobe.com", "dropbox.com", "salesforce.com", "zoom.us", "slack.com",
+            "spotify.com", "hulu.com", "disneyplus.com", "whatsapp.com", "telegram.org",
+            "weather.com", "accuweather.com", "espn.com", "nba.com", "nfl.com",
+            "imdb.com", "rottentomatoes.com", "yelp.com", "tripadvisor.com", "airbnb.com",
+            "uber.com", "lyft.com", "booking.com", "expedia.com", "kayak.com",
+            "craigslist.org", "ebay.com", "etsy.com", "walmart.com", "target.com",
+            "bestbuy.com", "homedepot.com", "ikea.com", "nike.com", "adidas.com",
+            "cnn.com", "foxnews.com", "nbcnews.com", "washingtonpost.com", "usatoday.com"
+        ]
+        
+        paths = [
+            "", "/login", "/signin", "/account", "/profile", "/settings", "/dashboard",
+            "/search?q=test", "/watch?v=12345", "/user/profile", "/item/12345",
+            "/category/electronics", "/articles/2023/news", "/help/contact",
+            "/about-us", "/terms", "/privacy", "/download", "/upload", "/images"
+        ]
+        
+        urls = []
+        # Generate combinations
+        for domain in domains:
+            for path in paths:
+                urls.append(f"https://www.{domain}{path}")
+                urls.append(f"http://{domain}{path}")
+        
+        # Add specific GitHub URLs to ensure it learns them
+        urls.append("https://github.com/microsoft/vscode")
+        urls.append("https://github.com/tensorflow/tensorflow")
+        urls.append("https://github.com/pytorch/pytorch")
+        
+        print(f"{len(urls)} legitimate URLs (generated)")
         return urls
     except:
         return []

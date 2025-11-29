@@ -15,13 +15,26 @@ class LightweightSLM:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         try:
             print(f"Loading SLM: {model_name}...")
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.model = AutoModel.from_pretrained(model_name).to(self.device)
+            
+            # Workaround for torch/transformers compatibility issue
+            import sys
+            import types
+            if 'torch.distributed.device_mesh' not in sys.modules:
+                mock_mesh = types.ModuleType('torch.distributed.device_mesh')
+                mock_mesh.init_device_mesh = lambda *args, **kwargs: None
+                sys.modules['torch.distributed.device_mesh'] = mock_mesh
+            
+            # Use specific class to avoid AutoModel dynamic loading issues
+            from transformers import DistilBertTokenizer, DistilBertModel
+            self.tokenizer = DistilBertTokenizer.from_pretrained(model_name)
+            self.model = DistilBertModel.from_pretrained(model_name).to(self.device)
             self.model.eval()
             self.enabled = True
         except Exception as e:
             print(f"SLM load failed: {e}")
+            # Fallback to disable SLM without crashing
             self.enabled = False
+            self.model = None
             return
 
         # Classification head
